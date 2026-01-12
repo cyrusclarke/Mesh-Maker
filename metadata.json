@@ -1,0 +1,7 @@
+{
+  "name": "HARD MODE: Mesh Maker",
+  "description": "A specialized AI-powered tool for generating and editing retro-futuristic CAD wireframe schematics using Gemini 2.5 Flash Image.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
