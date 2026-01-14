@@ -21,18 +21,42 @@ const getApiKey = () => {
 
 export const generateWireframeImage = async (
   prompt: string,
-  config: GenerationConfig
+  config: GenerationConfig,
+  referenceImageBase64?: string
 ): Promise<string> => {
   const apiKey = getApiKey();
   const ai = new GoogleGenAI({ apiKey });
   
-  const finalPrompt = `Generate a stylized CAD wireframe rendering of: ${prompt}. ${SYSTEM_PROMPT_REQUIREMENTS}`;
+  const parts: any[] = [];
+
+  const mainInstruction = `
+    INSTRUCTION: Create a brand new 3D wireframe mesh schematic of the following object: "${prompt}".
+    THE TEXT DESCRIPTION ABOVE IS THE PRIMARY SPECIFICATION.
+    The final output must be a unique geometric vector-style rendering.
+    ${SYSTEM_PROMPT_REQUIREMENTS}
+  `;
+
+  if (referenceImageBase64) {
+    const base64Data = referenceImageBase64.split(',')[1] || referenceImageBase64;
+    
+    parts.push({
+      text: `[STRUCTURAL REFERENCE ONLY]: Use the attached image as a minor hint for silhouette, scale, or general form factor only. DO NOT trace or directly edit this image. Prioritize the text specification for all details.`
+    });
+    parts.push({
+      inlineData: {
+        data: base64Data,
+        mimeType: 'image/png'
+      }
+    });
+  }
+
+  parts.push({ text: mainInstruction });
 
   try {
     const response = await ai.models.generateContent({
       model: config.model,
       contents: {
-        parts: [{ text: finalPrompt }],
+        parts: parts,
       },
       config: {
         imageConfig: {
@@ -66,7 +90,7 @@ export const editWireframeImage = async (
   const ai = new GoogleGenAI({ apiKey });
   
   const base64Data = base64Image.split(',')[1] || base64Image;
-  const finalPrompt = `Apply this modification to the wireframe schematic: ${instruction}. Maintain mesh aesthetic. ${SYSTEM_PROMPT_REQUIREMENTS}`;
+  const finalPrompt = `Apply this modification to the existing wireframe schematic: ${instruction}. Maintain mesh aesthetic. ${SYSTEM_PROMPT_REQUIREMENTS}`;
 
   try {
     const response = await ai.models.generateContent({
@@ -107,7 +131,8 @@ export const generateRotatingVideo = async (
   const ai = new GoogleGenAI({ apiKey });
   const base64Data = base64Image.split(',')[1] || base64Image;
 
-  const prompt = "A smooth 360-degree cinematic rotation of this 3D wireframe mesh object. The camera orbits the object. Smooth motion.";
+  // Added explicit "SILENT VIDEO" instruction to avoid unnecessary audio tracks in Veo generation.
+  const prompt = "A smooth 360-degree cinematic rotation of this 3D wireframe mesh object. The camera orbits the object. Smooth motion. SILENT VIDEO, NO AUDIO TRACK.";
 
   try {
     let operation = await ai.models.generateVideos({

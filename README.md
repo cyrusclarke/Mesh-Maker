@@ -1,12 +1,12 @@
-# Create 3D wireframe meshes and gifs out of almost anything
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-Text-to-CAD-style 3D wireframe maker. Can also transform the final output into a gif (which turns around 270 degrees).
+# Run and deploy your AI Studio app
 
-![Mesh example](images/mesh-example.png)
+This contains everything you need to run your app locally.
 
-# This is an AI Studio app
-
-View in AI Studio: https://ai.studio/apps/drive/173284z8jEXN0dqwloDv1dK_vkmQBtTmt
+View your app in AI Studio: https://ai.studio/apps/drive/173284z8jEXN0dqwloDv1dK_vkmQBtTmt
 
 ## Run Locally
 
